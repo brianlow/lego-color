@@ -6,7 +6,12 @@ import os
 import re
 import hashlib
 from lego_colors import lego_colors_by_id
+import random
 
+# Percentage (0-1.0) of generated images that will be used for validation,
+# the remaining images for training. Setting this to 0 when experimenting
+# makes it easier to review the results
+percent_val = 0.2
 
 os.makedirs("./tmp", exist_ok=True)
 os.makedirs("./data/dataset", exist_ok=True)
@@ -56,22 +61,11 @@ for root, _, files in os.walk("./src"):
                         bounding_box_bytes = str(box.xyxy[0]).encode('utf-8')
                         hash = hashlib.sha256(bounding_box_bytes).hexdigest()[:6]
 
-                        part_filename = f"./data/dataset/train/{cell_id}/{prefix}-{cell_id}-{hash}.png"
+                        val_or_train = 'val' if random.random() <= percent_val else 'train'
+                        part_filename = f"./data/dataset/{val_or_train}/{cell_id}/{prefix}-{cell_id}-{hash}.png"
                         print(part_filename)
                         part = cell.crop(box.xyxy[0].int().numpy())
                         part.save(part_filename)
-
-with open('./data/dataset.yaml', 'w') as f:
-  f.write(f"# Lego Color Classification Dataset\n")
-  f.write(f"#\n")
-  f.write(f"# Path must be an absolute path unless it is in an Ultralytics standard location\n")
-  f.write(f"path: {os.path.abspath('./data/dataset')}\n")
-  f.write(f"train: train/images\n")
-  f.write(f"val: val/images\n")
-  f.write(f"\n")
-  f.write(f"names:\n")
-  for id in sorted(all_ids, key=int):
-    f.write(f"  {id}: {lego_colors_by_id[id].name}\n")
 
 
 print("done.")
