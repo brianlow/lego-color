@@ -1,5 +1,4 @@
 matplotlib==3.7.0
-scipy==1.9.1
 pillow
-colormath
-scikit-image
+comet-ml
+ultralytics

@@ -8,6 +8,9 @@ class LegoColor:
         self.name = name
         self.hex_color_code = hex_color_code
 
+    def hex(self):
+        return self.hex_color_code
+
     def rgb(self):
         hex_color = self.hex_color_code.lstrip('#')
         return [int(hex_color[i:i+2], 16) for i in (0, 2, 4)] # [255, 255, 255]
