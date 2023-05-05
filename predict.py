@@ -40,17 +40,17 @@ for root, _, files in os.walk("./src"):
 
             draw = ImageDraw.Draw(img)
 
-            for i in range(3):
-                for j in range(3):
+            for row in range(3):
+                for col in range(3):
                     # Define the bounding box for the cell
-                    cell_left = j * cell_width
-                    cell_top = i * cell_height
-                    cell_right = (j + 1) * cell_width
-                    cell_bottom = (i + 1) * cell_height
+                    cell_left = col * cell_width
+                    cell_top = row * cell_height
+                    cell_right = (col + 1) * cell_width
+                    cell_bottom = (row + 1) * cell_height
 
                     # Crop the image to the bounding box
                     cell = img.crop((cell_left, cell_top, cell_right, cell_bottom))
-                    cell_id = ids[(i*3)+j]
+                    cell_id = ids[(row*3)+col]
 
                     detection_results = detection_model(cell.convert("RGB"))
 
@@ -90,16 +90,10 @@ for root, _, files in os.walk("./src"):
                         predicted = lego_colors_by_id[int(topk_classes[0])]
                         confidence = topk_values[0]
                         correct = predicted == actual
-                        offset = random.randint(0, 4) * 25
+                        draw.rectangle(((x1, y2+10), (x1+25, y2+10+25)), fill=f"#{predicted.hex()}")
+                        draw.text((x1+25+10, y2+10), f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})", fill='black' if correct else 'red', font=font)
 
-                        draw.rectangle(((x1, y2+10+offset), (x1+25, y2+10+25+offset)), fill=f"#{predicted.hex()}")
-                        draw.text((x1+25+10, y2+10+offset), f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})", fill='black' if correct else 'red', font=font)
-
-                    print(f"finished i {i}, j {j}, id {cell_id}")
-                    print(file)
                     img.save(f"tmp/{file}")
-                    import time
-                    time.sleep(2)
 
 
 
