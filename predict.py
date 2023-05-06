@@ -42,7 +42,8 @@ for root, _, files in os.walk("./src/images"):
             cell_width = width // 3
             cell_height = height // 3
 
-            draw = ImageDraw.Draw(img)
+            img_copy = img.copy()
+            draw = ImageDraw.Draw(img_copy)
 
             for row in range(3):
                 for col in range(3):
@@ -53,6 +54,7 @@ for root, _, files in os.walk("./src/images"):
                         w=cell_width,
                         h=cell_height
                     )
+                    cell_box.draw(draw)
 
                     # Crop the image to the bounding box
                     cell = cell_box.crop(img)
@@ -105,7 +107,7 @@ for root, _, files in os.walk("./src/images"):
                         draw.text(
                             (box.x1+25+10, box.y2+10), f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})", fill='black' if correct else 'red', font=font)
 
-                    img.save(f"tmp/{file}")
+                    img_copy.save(f"tmp/{file}")
 
 
 print("done.")
