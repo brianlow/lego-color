@@ -36,6 +36,8 @@ for root, _, files in os.walk("./src/images"):
             all_ids.update(ids)
 
             # Get the width and height of the image
+            # We will divide it into 9 cells (3x3)
+            # and perform object detection on each cell
             width, height = img.size
             cell_width = width // 3
             cell_height = height // 3
@@ -45,29 +47,22 @@ for root, _, files in os.walk("./src/images"):
             for row in range(3):
                 for col in range(3):
                     # Define the bounding box for the cell
-                    cell_bounding_box = BoundingBox.from_xywh(
+                    cell_box = BoundingBox.from_xywh(
                         x=col * cell_width,
                         y=row * cell_height,
                         w=cell_width,
                         h=cell_height
                     )
-                    print(cell_bounding_box)
-                    # cell_left = col * cell_width
-                    # cell_top = row * cell_height
-                    # cell_right = (col + 1) * cell_width
-                    # cell_bottom = (row + 1) * cell_height
 
                     # Crop the image to the bounding box
-                    # cell = img.crop((cell_left, cell_top, cell_right, cell_bottom))
-                    cell = cell_bounding_box.crop(img)
+                    cell = cell_box.crop(img)
                     cell_id = ids[(row*3)+col]
 
                     detection_results = detection_model(cell.convert("RGB"))
 
                     for yolo_box in detection_results[0].cpu().boxes:
-                        part_bounding_box = BoundingBox.from_yolo(yolo_box)
-                        part = part_bounding_box.crop(cell)
-                        # cell.crop(box.xyxy[0].int().numpy())
+                        part_box = BoundingBox.from_yolo(yolo_box)
+                        part = part_box.crop(cell)
 
                         color_results = model(part.convert("RGB"))
 
@@ -96,19 +91,12 @@ for root, _, files in os.walk("./src/images"):
                                 f"    {confidence * 100:.0f}%: ({predicted.id}) {predicted.name} ")
 
                         # bounding box in the original image
-                        part_bounding_box_on_image = part_bounding_box.move(
-                            cell_bounding_box.x,
-                            cell_bounding_box.y
+                        box = part_box.move(
+                            cell_box.x,
+                            cell_box.y
                             )
-                        part_bounding_box_on_image.draw(draw)
-                        #x1 = cell_left + box.xyxy[0][0].int()
-                        #y1 = cell_top + box.xyxy[0][1].int()
-                        #x2 = cell_left + box.xyxy[0][2].int()
-                        #y2 = cell_top + box.xyxy[0][3].int()
-                        #draw.rectangle(((x1, y1), (x2, y2)),
-                        #               outline='white', width=2)
+                        box.draw(draw)
 
-                        box = part_bounding_box_on_image
                         predicted = lego_colors_by_id[int(topk_classes[0])]
                         confidence = topk_values[0]
                         correct = predicted == actual
