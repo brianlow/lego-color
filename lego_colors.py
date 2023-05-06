@@ -23,7 +23,7 @@ class LegoColor:
         return deltaE_ciede2000(self.lab(), other_lab)[0][0]
 
     def __repr__(self):
-        return f"Color(id={self.id}, name='{self.name}', hex_color_code='{self.hex_color_code}')"
+        return f"LegoColor(id={self.id}, name='{self.name}', hex_color_code='{self.hex_color_code}')"
 
     def __rgb_array_to_lab(self, rgb_array):
         return rgb2lab(np.uint8(np.asarray([[rgb_array]])))

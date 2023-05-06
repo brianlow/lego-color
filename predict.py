@@ -7,8 +7,10 @@ import re
 from lego_colors import lego_colors_by_id
 import torch
 import random
+from src.bounding_box import BoundingBox
 
-detection_model = YOLO("detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
+detection_model = YOLO(
+    "detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
 model = YOLO("color-02-tiny-paperspace3.pt")
 
 font_path = os.path.expanduser('~/Library/Fonts/Arial.ttf')
@@ -43,19 +45,29 @@ for root, _, files in os.walk("./src/images"):
             for row in range(3):
                 for col in range(3):
                     # Define the bounding box for the cell
-                    cell_left = col * cell_width
-                    cell_top = row * cell_height
-                    cell_right = (col + 1) * cell_width
-                    cell_bottom = (row + 1) * cell_height
+                    cell_bounding_box = BoundingBox.from_xywh(
+                        x=col * cell_width,
+                        y=row * cell_height,
+                        w=cell_width,
+                        h=cell_height
+                    )
+                    print(cell_bounding_box)
+                    # cell_left = col * cell_width
+                    # cell_top = row * cell_height
+                    # cell_right = (col + 1) * cell_width
+                    # cell_bottom = (row + 1) * cell_height
 
                     # Crop the image to the bounding box
-                    cell = img.crop((cell_left, cell_top, cell_right, cell_bottom))
+                    # cell = img.crop((cell_left, cell_top, cell_right, cell_bottom))
+                    cell = cell_bounding_box.crop(img)
                     cell_id = ids[(row*3)+col]
 
                     detection_results = detection_model(cell.convert("RGB"))
 
-                    for box in detection_results[0].cpu().boxes:
-                        part = cell.crop(box.xyxy[0].int().numpy())
+                    for yolo_box in detection_results[0].cpu().boxes:
+                        part_bounding_box = BoundingBox.from_yolo(yolo_box)
+                        part = part_bounding_box.crop(cell)
+                        # cell.crop(box.xyxy[0].int().numpy())
 
                         color_results = model(part.convert("RGB"))
 
@@ -67,10 +79,12 @@ for root, _, files in os.walk("./src/images"):
                         pred_tensor = color_result.probs
 
                         # Get the top 3 indices and values
-                        topk_values, topk_indices = torch.topk(pred_tensor, k=3)
+                        topk_values, topk_indices = torch.topk(
+                            pred_tensor, k=3)
 
                         # Get the corresponding class labels from the class dictionary
-                        topk_classes = [class_dict[i.item()] for i in topk_indices]
+                        topk_classes = [class_dict[i.item()]
+                                        for i in topk_indices]
 
                         actual = lego_colors_by_id[cell_id]
                         print(f"({actual.id}) {actual.name} ->")
@@ -78,24 +92,32 @@ for root, _, files in os.walk("./src/images"):
                         for i in range(len(topk_classes)):
                             predicted = lego_colors_by_id[int(topk_classes[i])]
                             confidence = topk_values[i]
-                            print(f"    {confidence * 100:.0f}%: ({predicted.id}) {predicted.name} ")
+                            print(
+                                f"    {confidence * 100:.0f}%: ({predicted.id}) {predicted.name} ")
 
                         # bounding box in the original image
-                        x1 = cell_left + box.xyxy[0][0].int()
-                        y1 = cell_top + box.xyxy[0][1].int()
-                        x2 = cell_left + box.xyxy[0][2].int()
-                        y2 = cell_top + box.xyxy[0][3].int()
-                        draw.rectangle(((x1, y1), (x2, y2)), outline='white', width=2)
+                        part_bounding_box_on_image = part_bounding_box.move(
+                            cell_bounding_box.x,
+                            cell_bounding_box.y
+                            )
+                        part_bounding_box_on_image.draw(draw)
+                        #x1 = cell_left + box.xyxy[0][0].int()
+                        #y1 = cell_top + box.xyxy[0][1].int()
+                        #x2 = cell_left + box.xyxy[0][2].int()
+                        #y2 = cell_top + box.xyxy[0][3].int()
+                        #draw.rectangle(((x1, y1), (x2, y2)),
+                        #               outline='white', width=2)
 
+                        box = part_bounding_box_on_image
                         predicted = lego_colors_by_id[int(topk_classes[0])]
                         confidence = topk_values[0]
                         correct = predicted == actual
-                        draw.rectangle(((x1, y2+10), (x1+25, y2+10+25)), fill=f"#{predicted.hex()}")
-                        draw.text((x1+25+10, y2+10), f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})", fill='black' if correct else 'red', font=font)
+                        draw.rectangle(
+                            ((box.x1, box.y2+10), (box.x1+25, box.y2+10+25)), fill=f"#{predicted.hex()}")
+                        draw.text(
+                            (box.x1+25+10, box.y2+10), f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})", fill='black' if correct else 'red', font=font)
 
                     img.save(f"tmp/{file}")
-
-
 
 
 print("done.")
