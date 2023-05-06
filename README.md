@@ -1,6 +1,8 @@
 # Lego Color Classification Model
 
 
+![lego pieces with color predictions](docs/blues.jpeg)
+
 
 ```
 # gather source data
@@ -11,7 +13,7 @@
 # put lego pieces matching the color into the cells, do not overlap piecs, do not overlap cell boundaries (give yourself some margin)
 # take a photo, move a little ways away to minimize fisheye
 # crop/rotate photo to just the sheet of paper
-# put into ./src and include the Rebrickable Color IDs in the filename separated by dashes, left-to-right, top-to-bottom
+# put into ./src/images and include the Rebrickable Color IDs in the filename separated by dashes, left-to-right, top-to-bottom
 #   e.g. whatever-you-want.1-2-3-4-5-6-7-8-9.png
 
 # generate dataset (see intermediate output in ./tmp)

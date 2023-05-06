@@ -20,7 +20,7 @@ model = YOLO("detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
 
 all_ids = set([])
 
-for root, _, files in os.walk("./src"):
+for root, _, files in os.walk("./src/images"):
     for file in files:
         if file.lower().endswith(('.jpg', '.jpeg', '.png')):
             print(f"Opening {file}...")

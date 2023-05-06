@@ -16,7 +16,7 @@ font = ImageFont.truetype(font_path, size=24)
 
 all_ids = set([])
 
-for root, _, files in os.walk("./src"):
+for root, _, files in os.walk("./src/images"):
     for file in files:
         if file.lower().endswith(('.jpg', '.jpeg', '.png')):
             print(f"Opening {file}...")
