@@ -102,10 +102,9 @@ for root, _, files in os.walk("./src/images"):
                         predicted = lego_colors_by_id[int(topk_classes[0])]
                         confidence = topk_values[0]
                         correct = predicted == actual
-                        draw.rectangle(
-                            ((box.x1, box.y2+10), (box.x1+25, box.y2+10+25)), fill=f"#{predicted.hex()}")
-                        draw.text(
-                            (box.x1+25+10, box.y2+10), f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})", fill='black' if correct else 'red', font=font)
+                        box.draw_label(draw, f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})",
+                                       text_color = 'black' if correct else 'red',
+                                       swatch_color=predicted.hex())
 
                     img_copy.save(f"tmp/{file}")
 
