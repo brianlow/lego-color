@@ -1,7 +1,7 @@
 # Lego Color Classification Model
 
-
 ![lego pieces with color predictions](docs/blues.jpeg)
+
 
 
 ```

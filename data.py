@@ -47,6 +47,10 @@ for root, _, files in os.walk("./src/images"):
             cell_width = width // 3
             cell_height = height // 3
 
+            # Setup a copy of the image to draw on
+            img_copy = img.copy()
+            draw = ImageDraw.Draw(img_copy)
+
             for row in range(3):
                 for col in range(3):
                     # Define the bounding box for the cell
@@ -60,16 +64,29 @@ for root, _, files in os.walk("./src/images"):
                     # Crop the image to the bounding box
                     cell = cell_box.crop(img)
                     cell_id = ids[row*3+col]
+                    cell_color = lego_colors_by_id[cell_id]
 
                     results = model(cell.convert("RGB"))
 
                     for yolo_box in results[0].cpu().boxes:
                         part_box = BoundingBox.from_yolo(yolo_box)
 
+                        # bounding box in the original image
+                        box = part_box.move(
+                            cell_box.x,
+                            cell_box.y
+                            )
+                        box.draw(draw)
+                        box.draw_label(draw, f"{cell_color.name} ({cell_color.id})",
+                                       text_color = 'black',
+                                       swatch_color=cell_color.hex())
+
                         val_or_train = 'val' if random.random() <= percent_val else 'train'
                         part_filename = f"./data/{dataset_name}/{val_or_train}/{cell_id}/{prefix}-{cell_id}-{part_box.hash}.png"
                         part = part_box.crop(cell)
                         part.save(part_filename)
 
+            img_copy.save(f"tmp/dataset-{file}")
 
+print("See tmp/dataset-* for ")
 print("done.")

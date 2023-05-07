@@ -106,7 +106,8 @@ for root, _, files in os.walk("./src/images"):
                                        text_color = 'black' if correct else 'red',
                                        swatch_color=predicted.hex())
 
-                    img_copy.save(f"tmp/{file}")
+                    img_copy.save(f"tmp/predict-{file}")
 
 
-print("done.")
+print("See tmp/predict-* to predictions for source images")
+print("Done")
