@@ -88,5 +88,5 @@ for root, _, files in os.walk("./src/images"):
 
             img_copy.save(f"tmp/dataset-{file}")
 
-print("See tmp/dataset-* for ")
-print("done.")
+print("See tmp/dataset-* to see how the source images were parsed")
+print("Done")

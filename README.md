@@ -3,6 +3,17 @@
 ![lego pieces with color predictions](docs/blues.jpeg)
 
 
+## Dataset
+
+* 42 colors, including most/all of the common colors
+* real photos on white printer paper
+* high confidence they are tagged correctly
+  * parts are from two mostly pristine sets, so most color have some unique parts
+  * [10713-1 Creative Suitcase](https://rebrickable.com/sets/10713-1/creative-suitcase/#parts)
+  * [11011-1 Bricks and Animals](https://rebrickable.com/sets/11011-1/bricks-and-animals/?inventory=1#parts)
+
+
+## Do it yourself
 
 ```
 # gather source data
