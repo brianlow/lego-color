@@ -30,9 +30,6 @@ for root, _, files in os.walk("./src/images"):
             id_strings = re.findall(r'\.(.*?)\.', file)
             ids = [int(n) for n in id_strings[0].split('-')]
             print("ids: ", ids)
-            for id in ids:
-                os.makedirs(f"./data/dataset/train/{id}", exist_ok=True)
-                os.makedirs(f"./data/dataset/val/{id}", exist_ok=True)
             all_ids.update(ids)
 
             # Get the width and height of the image

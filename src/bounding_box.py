@@ -74,8 +74,11 @@ class BoundingBox:
             self.y2 + y
         )
 
+    @property
     def hash(self):
-        bytes = [self.x1, self.y1, self.x2, self.y2].join(".").encode('utf-8')
+        components = [self.x1, self.y1, self.x2, self.y2]
+        components = [str(c) for c in components]
+        bytes = ".".join(components).encode('utf-8')
         return hashlib.sha256(bytes).hexdigest()[:6]
 
     def __repr__(self):
