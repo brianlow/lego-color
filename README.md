@@ -1,6 +1,13 @@
 # Lego Color Classification Model
 
-![lego pieces with color predictions](docs/blues.jpeg)
+![lego pieces with color predictions](docs/purples.jpg)
+
+## Model
+
+* 99% top 1 accuracy on the validation set
+* Most failures are on really dark images
+* Only trained on white paper backgrounds, solid color parts
+* Trained ~190 epochs but best reach around ~75, 15s per epoch on P5000
 
 
 ## Dataset
@@ -11,6 +18,14 @@
   * parts are from two mostly pristine sets, so most color have some unique parts
   * [10713-1 Creative Suitcase](https://rebrickable.com/sets/10713-1/creative-suitcase/#parts)
   * [11011-1 Bricks and Animals](https://rebrickable.com/sets/11011-1/bricks-and-animals/?inventory=1#parts)
+
+
+
+## Future
+
+* more colors
+* vary the background
+* printed parts
 
 
 ## Do it yourself

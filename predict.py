@@ -11,7 +11,7 @@ from src.bounding_box import BoundingBox
 
 detection_model = YOLO(
     "detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
-model = YOLO("color-02-common2.pt")
+model = YOLO("color-03-common-nano.pt")
 
 font_path = os.path.expanduser('~/Library/Fonts/Arial.ttf')
 font = ImageFont.truetype(font_path, size=24)
