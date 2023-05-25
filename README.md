@@ -47,7 +47,7 @@ python dataset.py
 
 # optionally get on Paperspace.com
 cd datasets
-aws s3 cp lego-color-common-5k-dataset.zip s3://brian-lego-public/lego-color/
+aws s3 cp datasets/lego-color-common-5k-dataset-trans-real.zip s3://brian-lego-public/lego-color/
 wget https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/lego-color-common-5k-dataset.zip
 
 # train

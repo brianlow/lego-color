@@ -13,8 +13,8 @@ from pathlib import Path
 # export COMET_API_KEY=<your key if you want to report to comet.com>
 # pip install -r requirements.txt!
 
-experiment_name = "color-03-common-5k"
-dataset_name = "lego-color-common-5k-dataset"
+experiment_name = "color-03-common-5k-trans-real"
+dataset_name = "lego-color-common-5k-dataset-trans-real"
 
 comet_ml.init(project_name=experiment_name)
 
