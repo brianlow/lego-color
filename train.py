@@ -31,4 +31,4 @@ model = YOLO('yolov8l-cls.pt')
 # Train the model
 # Use an absolute path to the dataset folder. Otherwise it look
 # for a folder relative to a `yolo setting` folder elsewhere
-model.train(data=os.path.join(data_dir, dataset_name), name=experiment_name, epochs=300, hsv_h=0.0, hsv_s=0.0, hsv_v=0.0)
+model.train(data=os.path.join(data_dir, dataset_name), name=experiment_name, epochs=300, batch=-1, hsv_h=0.0, hsv_s=0.0, hsv_v=0.0)
