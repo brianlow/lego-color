@@ -15,7 +15,7 @@ percent_val = 0.2
 
 # Folder name for this dataset
 # Update to make it easier to distiguish from other versions
-dataset_name = "lego-color-common-5k-dataset-trans-real"
+dataset_name = "lego-color-common-5k-dataset-3-camera-blues"
 dataset_folder = f"./datasets/{dataset_name}"
 
 os.makedirs("./tmp", exist_ok=True)

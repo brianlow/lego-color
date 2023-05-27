@@ -14,7 +14,7 @@ from pathlib import Path
 # pip install -r requirements.txt!
 
 experiment_name = "color-03-common-5k-trans-real"
-dataset_name = "lego-color-common-5k-dataset-trans-real"
+dataset_name = "lego-color-common-5k-dataset-3-camera-blues"
 
 comet_ml.init(project_name=experiment_name)
 
@@ -31,4 +31,4 @@ model = YOLO('yolov8l-cls.pt')
 # Train the model
 # Use an absolute path to the dataset folder. Otherwise it look
 # for a folder relative to a `yolo setting` folder elsewhere
-model.train(data=os.path.join(data_dir, dataset_name), name=experiment_name, epochs=300, batch=-1, hsv_h=0.0, hsv_s=0.0, hsv_v=0.0)
+model.train(data=os.path.join(data_dir, dataset_name), name=experiment_name, epochs=300, batch=64, hsv_h=0.0, hsv_s=0.0, hsv_v=0.0)
