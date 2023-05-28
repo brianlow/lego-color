@@ -28,8 +28,9 @@ data_dir = str(Path(data_dir).resolve())
 # Download dataset if the data_dir doesn't exist
 dataset_dir = os.path.join(data_dir, dataset_name)
 if not os.path.exists(dataset_dir):
-  dataset_zip = f"#{dataset_name}.zip"
-  os.system(f"wget https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}")
+  dataset_zip = f"{dataset_name}.zip"
+  dataset_url = f"wget https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}"
+  print(f"Downloading dataset {dataset_url}...")
   os.system(f"unzip {dataset_zip}")
   os.system(f"rm {dataset_zip}")
 
