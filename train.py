@@ -1,6 +1,8 @@
 import os
 import comet_ml
 import sys
+import zipfile
+
 # sys.path.insert(0, '../ultralytics') # uncomment to use local clone of repo
 from ultralytics import YOLO
 from pathlib import Path
@@ -28,11 +30,14 @@ data_dir = str(Path(data_dir).resolve())
 # Download dataset if the data_dir doesn't exist
 dataset_dir = os.path.join(data_dir, dataset_name)
 if not os.path.exists(dataset_dir):
-  dataset_zip = f"{dataset_name}.zip"
-  dataset_url = f"wget https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}"
-  print(f"Downloading dataset {dataset_url}...")
-  os.system(f"unzip {dataset_zip}")
-  os.system(f"rm {dataset_zip}")
+    dataset_zip = f"{dataset_name}.zip"
+    dataset_zip_path = os.path.join(data_dir, dataset_zip)
+    if not os.path.exists(dataset_zip_path):
+        dataset_url = f"https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}"
+        print(f"Downloading dataset {dataset_url}...")
+        os.system(f"wget {dataset_url} -O {dataset_zip_path}")
+    with zipfile.ZipFile(dataset_zip_path, 'r') as zip_ref:
+        zip_ref.extractall(data_dir)
 
 # Load a model
 model = YOLO('yolov8l-cls.pt')

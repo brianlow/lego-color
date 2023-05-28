@@ -23,8 +23,6 @@ os.makedirs(dataset_folder, exist_ok=True)
 
 os.system(f"cp -r ../lego-rendering/renders/lego-color-common-5k-train-only/* {dataset_folder}/")
 
-exit()
-
 model = YOLO("detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
 
 # Each source image has parts of a single color
