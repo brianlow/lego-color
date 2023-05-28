@@ -29,9 +29,9 @@ data_dir = str(Path(data_dir).resolve())
 dataset_dir = os.path.join(data_dir, dataset_name)
 if not os.path.exists(dataset_dir):
   dataset_zip = f"#{dataset_name}.zip"
-  os.system(f"wget https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/#{dataset_zip}")
+  os.system(f"wget https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}")
   os.system(f"unzip {dataset_zip}")
-  os.system(f"rm #{dataset_zip}")
+  os.system(f"rm {dataset_zip}")
 
 # Load a model
 model = YOLO('yolov8l-cls.pt')
