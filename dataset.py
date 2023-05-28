@@ -15,13 +15,15 @@ percent_val = 0.2
 
 # Folder name for this dataset
 # Update to make it easier to distiguish from other versions
-dataset_name = "lego-color-common-5k-dataset-4-real-baseline"
+dataset_name = "lego-color-common-5k-dataset-4-baseline-plus-renders"
 dataset_folder = f"./datasets/{dataset_name}"
 
 os.makedirs("./tmp", exist_ok=True)
 os.makedirs(dataset_folder, exist_ok=True)
 
-# os.system(f"cp -r ../lego-rendering/renders/lego-color-common-5k-trans-real/* {dataset_folder}/")
+os.system(f"cp -r ../lego-rendering/renders/lego-color-common-5k-train-only/* {dataset_folder}/")
+
+exit()
 
 model = YOLO("detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
 
