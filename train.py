@@ -14,8 +14,9 @@ from pathlib import Path
 # export COMET_API_KEY=<your key if you want to report to comet.com>
 # pip install -r requirements.txt!
 
-experiment_name = "lego-color-10-more-photos"
 dataset_name = "lego-color-10-more-photos"
+
+experiment_name = "lego-color-10-more-photos-nano"
 
 # Determine where the data will be stored. Either
 #  ./datasets  - when running locally
@@ -37,7 +38,7 @@ if not os.path.exists(dataset_dir):
         zip_ref.extractall(data_dir)
 
 # Load a model
-model = YOLO('yolov8l-cls.pt')
+model = YOLO('yolov8n-cls.pt')
 
 # Train the model
 # Use an absolute path to the dataset folder. Otherwise it look
