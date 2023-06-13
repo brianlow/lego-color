@@ -1,49 +1,69 @@
 import os
 import sys
 import zipfile
+import torch
 
 from ultralytics import YOLO
 from pathlib import Path
 from lego_colors import lego_colors_by_id
 
-dataset_name = "lego-color-common-5k-dataset-trans-real"
-model = YOLO("color-03-common-5k-trans-real2.pt")
+dataset_name = "lego-color-10-more-photos"
+model = YOLO("lego-color-common-5k-dataset-4-baseline-plus-renders.pt")
 
 data_dir = './datasets'
 data_dir = str(Path(data_dir).resolve())
 dataset_dir = os.path.join(data_dir, dataset_name)
-per_class_datasets_dir = os.path.join(dataset_dir, "per-class-datasets")
 
-os.makedirs(per_class_datasets_dir, exist_ok=True)
+total = 0
+correct = 0
+accuracies = []
 
 class_dirs = [f.path for f in os.scandir(f"{dataset_dir}/val") if f.is_dir()]
-class_names = [os.path.basename(class_dir) for class_dir in class_dirs]
-
 for class_dir in class_dirs:
     class_name = os.path.basename(class_dir)
     color = lego_colors_by_id[int(class_name)]
+    print(f"Validating {color.id} - {color.name}...")
+    class_total = 0
+    class_correct = 0
 
-    class_dataset_dir = os.path.join(per_class_datasets_dir, f"dataset-{class_name}")
-    dest_dir = os.path.join(class_dataset_dir, "val", class_name)
+    for root, _, files in os.walk(class_dir):
+        for file in files:
+            if file.lower().endswith(('.jpg', '.jpeg', '.png')):
+                print(f"Opening {file}...")
+                filepath = os.path.join(root, file)
 
-    print(class_dataset_dir)
-    print(f"{class_dir} -> {dest_dir}")
+                results = model(filepath)
 
-    if not os.path.exists(class_dataset_dir):
-        os.makedirs(os.path.join(class_dataset_dir, "train"), exist_ok=True)
-        os.makedirs(os.path.join(class_dataset_dir, "val"), exist_ok=True)
-        os.symlink(class_dir, dest_dir)
-        for other_class_name in class_names:
-            os.makedirs(os.path.join(class_dataset_dir, "train", other_class_name), exist_ok=True)
+                result = results[0].cpu()
+                class_dict = result.names
+                pred_tensor = result.probs
+                topk_values, topk_indices = torch.topk(pred_tensor, k=1)
+                topk_classes = [class_dict[i.item()]for i in topk_indices]
+                predicted = lego_colors_by_id[int(topk_classes[0])]
 
-    model.val(data=class_dataset_dir, name=f"val-{color.id}-{color.name}", hsv_h=0.0, hsv_s=0.0, hsv_v=0.0)
+                class_total += 1
+                total += 1
+                if predicted.id == color.id:
+                    class_correct += 1
+                    correct += 1
+                print(f"Predicted: {predicted.id} - {predicted.name} -> {predicted.id == color.id}")
 
-    print(f"{color.id} - {color.name} -> {model.metrics.top1:.1%} accuracy (top 1)")
+
+    accuracy = class_correct/class_total
+
+    accuracies.append((color, accuracy, class_total))
 
 
+print("")
+print("Top1 Accuracy by Color")
+print("-----------")
+print("")
 
+# sort accuracies by accuracy descending
+accuracies.sort(key=lambda x: x[1], reverse=True)
 
-# Validate
-# model.val(data=f"{dataset_dir}, hsv_h=0.0, hsv_s=0.0, hsv_v=0.0)
+for color, accuracy, class_total in accuracies:
+    print(f"{color.id:4d} - {color.name:<20s}:  {accuracy:6.1%} ({class_total} images)")
 
-# print(f"Accuracy Top 1: {model.metrics.top1:.1%}")
+print("")
+print(f"Overall accuracy {correct/total:.1%}")

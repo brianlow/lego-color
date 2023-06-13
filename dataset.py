@@ -15,55 +15,61 @@ percent_val = 0.2
 
 # Folder name for this dataset
 # Update to make it easier to distiguish from other versions
-dataset_name = "lego-color-common-5k-dataset-4-baseline-plus-renders"
+dataset_name = "lego-color-10-more-photos"
 dataset_folder = f"./datasets/{dataset_name}"
 
 os.makedirs("./tmp", exist_ok=True)
 os.makedirs(dataset_folder, exist_ok=True)
 
-os.system(f"cp -r ../lego-rendering/renders/lego-color-common-5k-train-only/* {dataset_folder}/")
+# Do not include renders right now, they don't seem to help
+# Maybe they will be valuable if we can color match the renderings
+# os.system(f"cp -r ../lego-rendering/renders/lego-color-common-5k-train-only/* {dataset_folder}/")
 
-model = YOLO("detect-10-4k-real-and-renders-nano-1024-image-size2.pt")
+model = YOLO("lego-detect-13-7k-more-negatives3.pt")
 
 # Each source image has parts of a single color
 # The color id is in the filename
-for root, _, files in os.walk("./src/images/1x1"):
-    for file in files:
-        if file.lower().endswith(('.jpg', '.jpeg', '.png')):
-            print(f"Opening {file}...")
-            filepath = os.path.join(root, file)
-            img = Image.open(filepath)
+def split_single_color_images(source_path):
+    for root, _, files in os.walk(source_path):
+        for file in files:
+            if file.lower().endswith(('.jpg', '.jpeg', '.png')):
+                print(f"Opening {file}...")
+                filepath = os.path.join(root, file)
+                img = Image.open(filepath)
 
-            prefix = file.split('.')[0]
+                prefix = file.split('.')[0]
 
-            id = re.findall(r'\.(\d+)\.', file)[0]
-            os.makedirs(f"{dataset_folder}/train/{id}", exist_ok=True)
-            os.makedirs(f"{dataset_folder}/val/{id}", exist_ok=True)
+                id = re.findall(r'\.(\d+)\.', file)[0]
+                os.makedirs(f"{dataset_folder}/train/{id}", exist_ok=True)
+                os.makedirs(f"{dataset_folder}/val/{id}", exist_ok=True)
 
-            # Setup a copy of the image to draw on
-            img_copy = img.copy()
-            draw = ImageDraw.Draw(img_copy)
+                # Setup a copy of the image to draw on
+                img_copy = img.copy()
+                draw = ImageDraw.Draw(img_copy)
 
-            color = lego_colors_by_id[int(id)]
+                color = lego_colors_by_id[int(id)]
 
-            results = model(img.convert("RGB"))
+                results = model(img.convert("RGB"))
 
-            for yolo_box in results[0].cpu().boxes:
-                part_box = BoundingBox.from_yolo(yolo_box)
+                for yolo_box in results[0].cpu().boxes:
+                    part_box = BoundingBox.from_yolo(yolo_box)
 
-                # bounding box in the original image
-                part_box.draw(draw)
-                part_box.draw_label(draw, f"{color.name} ({color.id})",
-                                   text_color = 'black',
-                                   swatch_color=color.hex())
+                    # bounding box in the original image
+                    part_box.draw(draw)
+                    part_box.draw_label(draw, f"{color.name} ({color.id})",
+                                    text_color = 'black',
+                                    swatch_color=color.hex())
 
-                val_or_train = 'val' if random.random() <= percent_val else 'train'
-                part_filename = f"{dataset_folder}/{val_or_train}/{id}/{prefix}-{id}-{part_box.hash}.png"
-                part = part_box.crop(img)
-                part.save(part_filename)
+                    val_or_train = 'val' if random.random() <= percent_val else 'train'
+                    part_filename = f"{dataset_folder}/{val_or_train}/{id}/{prefix}-{id}-{part_box.hash}.png"
+                    part = part_box.crop(img)
+                    part.save(part_filename)
 
-            img_copy.save(f"tmp/dataset-{file}")
+                img_copy.save(f"tmp/preview-{file}")
 
+split_single_color_images("./src/images/1x1")
+split_single_color_images("./src/images/1x1-cropped")
+split_single_color_images("./src/images/1x1-old")
 
 # Each image in this folder has parts with 9 different colors
 # with the colors arranged into a 3x3 grid. This lets us divide the
@@ -128,15 +134,15 @@ for root, _, files in os.walk("./src/images/3x3"):
                         part = part_box.crop(cell)
                         part.save(part_filename)
 
-            img_copy.save(f"tmp/dataset-{file}")
+            img_copy.save(f"tmp/preview-{file}")
 
 os.chdir('datasets')
-os.system(f'zip -r {dataset_name}.zip {dataset_name}')
+# os.system(f'zip -r {dataset_name}.zip {dataset_name}')
 os.chdir('..')
 
 print('')
 print(f"Created dataset at {dataset_folder}")
-print(f"Zipped to {dataset_name}.zip")
-print("See tmp/dataset-* to see how the source images were parsed")
+# print(f"Zipped to {dataset_name}.zip")
+print("See tmp/preview-* to see how the source images were parsed")
 print('')
 print("Done")

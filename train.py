@@ -15,14 +15,14 @@ from pathlib import Path
 # export COMET_API_KEY=<your key if you want to report to comet.com>
 # pip install -r requirements.txt!
 
-experiment_name = "lego-color-common-5k-dataset-4-baseline-plus-renders"
-dataset_name = "lego-color-common-5k-dataset-4-baseline-plus-renders"
+experiment_name = "lego-color-10-more-photos"
+dataset_name = "lego-color-10-more-photos"
 
 comet_ml.init(project_name=experiment_name)
 
 # Determine where the data will be stored. Either
-#  ./datasets   - when running locally
-#  /storage - when running on Paperspace
+#  ./datasets  - when running locally
+#  /storage    - when running on Paperspace
 is_paperspace = os.environ.get('PAPERSPACE_CLUSTER_ID') is not None
 data_dir = '/storage' if is_paperspace else './datasets'
 data_dir = str(Path(data_dir).resolve())
