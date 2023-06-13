@@ -1,5 +1,4 @@
 import os
-import comet_ml
 import sys
 import zipfile
 
@@ -17,8 +16,6 @@ from pathlib import Path
 
 experiment_name = "lego-color-10-more-photos"
 dataset_name = "lego-color-10-more-photos"
-
-comet_ml.init(project_name=experiment_name)
 
 # Determine where the data will be stored. Either
 #  ./datasets  - when running locally
