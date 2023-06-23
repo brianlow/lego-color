@@ -7,7 +7,7 @@ from ultralytics import YOLO
 from pathlib import Path
 from lego_colors import lego_colors_by_id
 
-dataset_name = "lego-color-10-more-photos"
+dataset_name = "lego-color-11-yellows-and-blues"
 model = YOLO("lego-color-common-5k-dataset-4-baseline-plus-renders.pt")
 
 data_dir = './datasets'

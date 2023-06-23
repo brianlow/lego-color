@@ -14,9 +14,9 @@ from pathlib import Path
 # export COMET_API_KEY=<your key if you want to report to comet.com>
 # pip install -r requirements.txt!
 
-dataset_name = "lego-color-10-more-photos"
+dataset_name = "lego-color-11-yellows-and-blues"
 
-experiment_name = "lego-color-10-more-photos-nano"
+experiment_name = "lego-color-11-yellows-and-blues-nano"
 
 # Determine where the data will be stored. Either
 #  ./datasets  - when running locally

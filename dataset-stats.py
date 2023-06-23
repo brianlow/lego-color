@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 
-dataset_name = "lego-color-10-more-photos"
+dataset_name = "lego-color-11-yellows-and-blues"
 
 dataset_path = f"./datasets/{dataset_name}"
 train_path = os.path.join(dataset_path, "train")
