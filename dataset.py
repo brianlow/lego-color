@@ -70,6 +70,7 @@ def split_single_color_images(source_path):
 split_single_color_images("./src/images/1x1")
 split_single_color_images("./src/images/1x1-cropped")
 split_single_color_images("./src/images/1x1-old")
+split_single_color_images("./src/images/1x1-yellows-and-blues")
 
 # Each image in this folder has parts with 9 different colors
 # with the colors arranged into a 3x3 grid. This lets us divide the
@@ -136,13 +137,8 @@ for root, _, files in os.walk("./src/images/3x3"):
 
             img_copy.save(f"tmp/preview-{file}")
 
-os.chdir('datasets')
-# os.system(f'zip -r {dataset_name}.zip {dataset_name}')
-os.chdir('..')
-
 print('')
 print(f"Created dataset at {dataset_folder}")
-# print(f"Zipped to {dataset_name}.zip")
 print("See tmp/preview-* to see how the source images were parsed")
 print('')
 print("Done")
