@@ -15,6 +15,55 @@ model = YOLO("color-03-common-5k-trans-real2.pt")
 font_path = os.path.expanduser('~/Library/Fonts/Arial.ttf')
 font = ImageFont.truetype(font_path, size=24)
 
+
+for root, _, files in os.walk("./samples"):
+    for file in files:
+        if file.lower().endswith(('.jpg', '.jpeg', '.png')):
+            print(f"Opening {file}...")
+            filepath = os.path.join(root, file)
+            img = Image.open(filepath)
+
+            prefix = file.split('.')[0]
+
+            # Setup copy of the image to draw on
+            img_copy = img.copy()
+            draw = ImageDraw.Draw(img_copy)
+
+            detection_results = detection_model(img.convert("RGB"))
+
+            for yolo_box in detection_results[0].cpu().boxes:
+                part_box = BoundingBox.from_yolo(yolo_box)
+                part = part_box.crop(img)
+
+                color_results = model(part.convert("RGB"))
+
+                color_result = color_results[0].cpu()
+                print(color_result.names)
+                print(color_result.probs.data)
+
+                class_dict = color_result.names
+                pred_tensor = color_result.probs.data
+
+                # Get the top 3 indices and values
+                topk_values, topk_indices = torch.topk(
+                    pred_tensor, k=3)
+
+                # Get the corresponding class labels from the class dictionary
+                topk_classes = [class_dict[i.item()]
+                                for i in topk_indices]
+
+                # bounding box in the original image
+                part_box.draw(draw)
+
+                predicted = lego_colors_by_id[int(topk_classes[0])]
+                confidence = topk_values[0]
+                part_box.draw_label(draw, f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})",
+                                text_color = 'black',
+                                swatch_color=predicted.hex())
+
+            img_copy.save(f"tmp/predict-{file}")
+exit()
+
 for root, _, files in os.walk("./src/images/colors-cropped"):
     for file in files:
         if file.lower().endswith(('.jpg', '.jpeg', '.png')):
@@ -79,52 +128,7 @@ for root, _, files in os.walk("./src/images/colors-cropped"):
 
 
 exit()
-for root, _, files in os.walk("./samples"):
-    for file in files:
-        if file.lower().endswith(('.jpg', '.jpeg', '.png')):
-            print(f"Opening {file}...")
-            filepath = os.path.join(root, file)
-            img = Image.open(filepath)
 
-            prefix = file.split('.')[0]
-
-            # Setup copy of the image to draw on
-            img_copy = img.copy()
-            draw = ImageDraw.Draw(img_copy)
-
-            detection_results = detection_model(img.convert("RGB"))
-
-            for yolo_box in detection_results[0].cpu().boxes:
-                part_box = BoundingBox.from_yolo(yolo_box)
-                part = part_box.crop(img)
-
-                color_results = model(part.convert("RGB"))
-
-                color_result = color_results[0].cpu()
-                print(color_result.names)
-                print(color_result.probs.data)
-
-                class_dict = color_result.names
-                pred_tensor = color_result.probs.data
-
-                # Get the top 3 indices and values
-                topk_values, topk_indices = torch.topk(
-                    pred_tensor, k=3)
-
-                # Get the corresponding class labels from the class dictionary
-                topk_classes = [class_dict[i.item()]
-                                for i in topk_indices]
-
-                # bounding box in the original image
-                part_box.draw(draw)
-
-                predicted = lego_colors_by_id[int(topk_classes[0])]
-                confidence = topk_values[0]
-                part_box.draw_label(draw, f"{confidence * 100:.0f}%: {predicted.name} ({predicted.id})",
-                                text_color = 'black',
-                                swatch_color=predicted.hex())
-
-            img_copy.save(f"tmp/predict-{file}")
 
 for root, _, files in os.walk("./src/images/1x1"):
     for file in files:
