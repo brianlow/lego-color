@@ -8,7 +8,7 @@ from pathlib import Path
 from lego_colors import lego_colors_by_id
 
 dataset_name = "lego-color-11-yellows-and-blues"
-model = YOLO("lego-color-common-5k-dataset-4-baseline-plus-renders.pt")
+model = YOLO("lego-color-11-yellows-and-blues-nano2.pt")
 
 data_dir = './datasets'
 data_dir = str(Path(data_dir).resolve())
@@ -36,7 +36,7 @@ for class_dir in class_dirs:
 
                 result = results[0].cpu()
                 class_dict = result.names
-                pred_tensor = result.probs
+                pred_tensor = result.probs.data
                 topk_values, topk_indices = torch.topk(pred_tensor, k=1)
                 topk_classes = [class_dict[i.item()]for i in topk_indices]
                 predicted = lego_colors_by_id[int(topk_classes[0])]

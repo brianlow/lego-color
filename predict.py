@@ -10,7 +10,7 @@ import random
 from src.bounding_box import BoundingBox
 
 detection_model = YOLO("lego-detect-13-7k-more-negatives3.pt")
-model = YOLO("color-03-common-5k-trans-real2.pt")
+model = YOLO("lego-color-11-yellows-and-blues-nano2.pt")
 
 font_path = os.path.expanduser('~/Library/Fonts/Arial.ttf')
 font = ImageFont.truetype(font_path, size=24)
