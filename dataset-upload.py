@@ -1,6 +1,6 @@
 import os
 
-dataset_name = "lego-color-11-yellows-and-blues"
+dataset_name = "lego-color-12-all-colors-all-cameras"
 
 
 os.chdir('datasets')

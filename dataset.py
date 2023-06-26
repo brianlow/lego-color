@@ -15,7 +15,7 @@ percent_val = 0.2
 
 # Folder name for this dataset
 # Update to make it easier to distiguish from other versions
-dataset_name = "lego-color-11-yellows-and-blues"
+dataset_name = "lego-color-12-all-colors-all-cameras"
 dataset_folder = f"./datasets/{dataset_name}"
 
 os.makedirs("./tmp", exist_ok=True)
@@ -70,7 +70,7 @@ def split_single_color_images(source_path):
 split_single_color_images("./src/images/1x1")
 split_single_color_images("./src/images/1x1-cropped")
 split_single_color_images("./src/images/1x1-old")
-split_single_color_images("./src/images/1x1-yellows-and-blues")
+split_single_color_images("./src/images/1x1-phase-3")
 
 # Each image in this folder has parts with 9 different colors
 # with the colors arranged into a 3x3 grid. This lets us divide the

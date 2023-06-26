@@ -7,7 +7,7 @@ from ultralytics import YOLO
 from pathlib import Path
 from lego_colors import lego_colors_by_id
 
-dataset_name = "lego-color-11-yellows-and-blues"
+dataset_name = "lego-color-12-all-colors-all-cameras"
 model = YOLO("lego-color-11-yellows-and-blues-nano2.pt")
 
 data_dir = './datasets'
@@ -17,6 +17,7 @@ dataset_dir = os.path.join(data_dir, dataset_name)
 total = 0
 correct = 0
 accuracies = []
+incorrect_files = []
 
 class_dirs = [f.path for f in os.scandir(f"{dataset_dir}/val") if f.is_dir()]
 for class_dir in class_dirs:
@@ -46,6 +47,9 @@ for class_dir in class_dirs:
                 if predicted.id == color.id:
                     class_correct += 1
                     correct += 1
+                else:
+                    incorrect_files.append(file)
+
                 print(f"Predicted: {predicted.id} - {predicted.name} -> {predicted.id == color.id}")
 
 
@@ -53,6 +57,13 @@ for class_dir in class_dirs:
 
     accuracies.append((color, accuracy, class_total))
 
+
+print("")
+print("Incorrect files")
+print("-----------")
+print("")
+for file in sorted(incorrect_files):
+    print(file)
 
 print("")
 print("Top1 Accuracy by Color")

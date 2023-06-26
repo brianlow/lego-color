@@ -14,9 +14,9 @@ from pathlib import Path
 # export COMET_API_KEY=<your key if you want to report to comet.com>
 # pip install -r requirements.txt!
 
-dataset_name = "lego-color-11-yellows-and-blues"
+dataset_name = "lego-color-12-all-colors-all-cameras"
 
-experiment_name = "lego-color-11-yellows-and-blues-nano"
+experiment_name = "lego-color-12-all-colors-all-cameras"
 
 # Determine where the data will be stored. Either
 #  ./datasets  - when running locally
@@ -33,7 +33,7 @@ if not os.path.exists(dataset_dir):
     if not os.path.exists(dataset_zip_path):
         dataset_url = f"https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}"
         print(f"Downloading dataset {dataset_url}...")
-        os.system(f"wget {dataset_url} -O {dataset_zip_path}")
+        os.system(f"axel {dataset_url} -o {dataset_zip_path}")
     with zipfile.ZipFile(dataset_zip_path, 'r') as zip_ref:
         zip_ref.extractall(data_dir)
 
