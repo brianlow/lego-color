@@ -33,7 +33,7 @@ if not os.path.exists(dataset_dir):
     if not os.path.exists(dataset_zip_path):
         dataset_url = f"https://brian-lego-public.s3.us-west-1.amazonaws.com/lego-color/{dataset_zip}"
         print(f"Downloading dataset {dataset_url}...")
-        os.system(f"axel {dataset_url} -o {dataset_zip_path}")
+        os.system(f"axel --alternate {dataset_url} -o {dataset_zip_path}")
     with zipfile.ZipFile(dataset_zip_path, 'r') as zip_ref:
         zip_ref.extractall(data_dir)
 
